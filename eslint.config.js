@@ -22,13 +22,20 @@ export default defineConfig([
     },
   },
 
-  // 自定义规则
+  // 自定义规则1
   {
     plugins: {
       stylistic,
     },
     rules: {
       "stylistic/comma-dangle": "warn",
+    },
+  },
+
+  // 自定义规则2
+  {
+    rules: {
+      semi: "warn",
     },
   },
 
