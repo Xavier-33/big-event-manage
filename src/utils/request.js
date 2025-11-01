@@ -17,7 +17,7 @@ instance.interceptors.request.use(
     if (userStore.token) {
       config.headers.Authorization = userStore.token
     }
-    console.log('发送请求')
+    // console.log('发送请求')
     return config
   },
   (err) => Promise.reject(err)
