@@ -1,8 +1,9 @@
 <template>
   <PageContainer title="文章分类">
     <template #extra>
-      <el-button>添加分类</el-button>
+      <el-button @click="onAddChannel">添加分类</el-button>
     </template>
+    <!-- 内容区 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
       <el-table-column prop="cate_name" label="分类名称"></el-table-column>
@@ -30,6 +31,8 @@
         <el-empty description="没有数据"></el-empty>
       </template>
     </el-table>
+    <!-- 添加分类弹层 -->
+    <channel-edit ref="dialog" @success="onSuccess"></channel-edit>
   </PageContainer>
 </template>
 
@@ -37,9 +40,11 @@
 import { articleGetChannelService } from '@/api/article.js'
 import { ref } from 'vue'
 import { Edit, Delete } from '@element-plus/icons-vue'
+import ChannelEdit from './components/ChannelEdit.vue'
 
 const channelList = ref([])  // 文章分类列表
 const loading = ref(false)
+const dialog = ref(null)  // 获取 ChannelEdit 组件实例
 
 
 // 静态数据
@@ -58,7 +63,8 @@ const staticChannelList = [
 const getChannelList = async () => {
   loading.value = true
   const res = await articleGetChannelService()
-  if (res.code === 200) {
+  console.log('文章分类列表', res)
+  if (res.status === 200) {
     channelList.value = res.data.data
     console.log('my_cate_list api success')
   } else {
@@ -69,15 +75,26 @@ const getChannelList = async () => {
   loading.value = false
 }
 
+getChannelList()
 
-const onEditChannel = (row, $index) => {
-  console.log(row, $index)
+// 添加分类按钮
+const onAddChannel = () => {
+  dialog.value.open({})
 }
+// 编辑按钮
+const onEditChannel = (row) => {
+  console.log(row)
+  dialog.value.open(row)
+}
+// 删除按钮
 const onDeleteChannel = (row, $index) => {
   console.log(row, $index)
 }
+// 成功编辑刷新列表
+const onSuccess = () => {
+  getChannelList()
+}
 
-getChannelList()
 </script>
 
 <style lang="scss" scoped></style>

@@ -17,7 +17,7 @@ instance.interceptors.request.use(
     if (userStore.token) {
       config.headers.Authorization = userStore.token
     }
-    // console.log('发送请求')
+    console.log('请求携带token', userStore.token)
     return config
   },
   (err) => Promise.reject(err)
@@ -36,10 +36,9 @@ instance.interceptors.response.use(
     if (err.response?.status === 401) {
       router.push('/login')
     }
-
     // 错误的默认情况
     ElMessage.error(err.response.date.message || '服务异常')
-    Promise.reject(err)
+    return Promise.reject(err)
   }
 )
 
