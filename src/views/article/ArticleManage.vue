@@ -6,15 +6,10 @@
     <!-- 表单区域 -->
     <el-form inline>
       <el-form-item label="文章分类：">
-        <el-select placeholder="请选择" style="width: 240px">
-          <el-option label="所有文章" value="all"></el-option>
-          <el-option label="草稿文章" value="draft"></el-option>
-          <el-option label="已发布文章" value="published"></el-option>
-        </el-select>
+        <channel-select v-model="params.cate_id"></channel-select>
       </el-form-item>
       <el-form-item label="发布状态：">
-        <el-select placeholder="请选择" style="width: 240px">
-          <el-option label="所有文章" value="all"></el-option>
+        <el-select v-model="params.state" placeholder="请选择" style="width: 240px">
           <el-option label="草稿文章" value="draft"></el-option>
           <el-option label="已发布文章" value="published"></el-option>
         </el-select>
@@ -32,7 +27,11 @@
         </template>
       </el-table-column>
       <el-table-column label="分类" prop="cate_name"></el-table-column>
-      <el-table-column label="发表时间" prop="pub_date"></el-table-column>
+      <el-table-column label="发表时间" prop="pub_date">
+        <template #default="scope">
+          {{ formatTime(scope.row.pub_date) }}
+        </template>
+      </el-table-column>
       <el-table-column label="发布状态" prop="state"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
@@ -47,28 +46,37 @@
 <script setup>
 import { ref } from 'vue'
 import { Edit, Delete } from '@element-plus/icons-vue'
-// 定义文章列表
-const articleList = ref([
-  {
-    id: 1,
-    title: '文章标题1',
-    pub_date: '2023-01-01 12:00:00',
-    state: '已发布文章',
-    cate_name: '体育'
-  },
-  {
-    id: 2,
-    title: '文章标题2',
-    pub_date: '2023-01-02 12:00:00',
-    state: '已发布文章',
-    cate_name: '科技'
-  }
-])
+import ChannelSelect from '@/views/article/components/ChannelSelect.vue'
+import { articleGetListService } from '@/api/article'
+import { formatTime } from '@/utils/format'
+
+
+
+const articleList = ref([])  // 文章列表
+const total = ref(0)  // 文章总数
+
+// 定义请求参数对象
+const params = ref({
+  pagenum: 1,
+  pagesize: 10,
+  cate_id: '',
+  state: ''
+})
+
+// 定义获取文章列表方法
+const getArticleList = async () => {
+  const res = await articleGetListService(params.value)
+  console.log(res)
+  if (res.data.code !== 0) return ElMessage.error('获取文章列表失败')
+  articleList.value = res.data.data
+  total.value = res.data.total
+}
+getArticleList()
+
 // 定义编辑文章方法
 const onEditArticle = (row) => {
   console.log('编辑文章', row)
 }
-
 // 定义删除文章方法
 const onDeleteArticle = (row) => {
   console.log('删除文章', row)

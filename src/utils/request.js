@@ -17,7 +17,6 @@ instance.interceptors.request.use(
     if (userStore.token) {
       config.headers.Authorization = userStore.token
     }
-    console.log('请求携带token', userStore.token)
     return config
   },
   (err) => Promise.reject(err)

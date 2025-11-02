@@ -12,3 +12,8 @@ export const articleAddChannelService = (data) => {
 export const articleEditChannelService = (data) => {
   return request.put('/my/cate/info', data)
 }
+
+// 管理：获取文章列表
+export const articleGetListService = (params) => {
+  return request.get('/my/article/list', { params })
+}
