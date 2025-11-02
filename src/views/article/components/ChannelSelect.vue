@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="modelValue" placeholder="请选择" style="width: 240px">
+  <el-select v-model="modelValue" placeholder="请选择" :style="{ width }">
     <el-option
       v-for="item in channelList"
       :key="item.id"
@@ -12,6 +12,13 @@
 <script setup>
 import { ref } from 'vue'
 import { articleGetChannelService } from '@/api/article'
+
+defineProps({
+  width: {
+    type: String
+  }
+})
+
 
 const modelValue = defineModel()
 
