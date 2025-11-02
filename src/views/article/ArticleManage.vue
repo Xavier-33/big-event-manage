@@ -1,7 +1,7 @@
 <template>
   <PageContainer title="文章管理">
     <template #extra>
-      <el-button>添加文章</el-button>
+      <el-button type="primary" @click="onAddArticle">添加文章</el-button>
     </template>
     <!-- 表单区域 -->
     <el-form inline>
@@ -52,19 +52,25 @@
       @current-change="handleCurrentChange"
       style="margin-top: 20px; justify-content: flex-end;"
     />
+    <!-- 抽屉组件 -->
+    <article-edit ref="articleEditRef"></article-edit>
   </PageContainer>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { Edit, Delete } from '@element-plus/icons-vue'
-import ChannelSelect from '@/views/article/components/ChannelSelect.vue'
+import ChannelSelect from './components/ChannelSelect.vue'
+import ArticleEdit from './components/ArticleEdit.vue'
 import { articleGetListService } from '@/api/article'
 import { formatTime } from '@/utils/format'
+
 
 const articleList = ref([])  // 文章列表
 const total = ref(0)  // 文章总数
 const loading = ref(false)  // 分页加载状态
+const articleEditRef = ref(null)  // 获取抽屉组件实例
+
 
 // 请求参数模型
 const params = ref({
@@ -74,7 +80,7 @@ const params = ref({
   state: ''
 })
 
-// 请求获取文章列表方法
+// 获取文章列表请求
 const getArticleList = async () => {
   loading.value = true
 
@@ -87,6 +93,11 @@ const getArticleList = async () => {
   loading.value = false
 }
 
+
+// 添加文章按键方法
+const onAddArticle = () => {
+  articleEditRef.value.open({})
+}
 // 搜索按钮点击事件
 const onSearch = () => {
   params.value.pagenum = 1
@@ -104,7 +115,7 @@ const onReset = () => {
 }
 // 按键编辑文章方法
 const onEditArticle = (row) => {
-  console.log('编辑文章', row)
+  articleEditRef.value.open(row)
 }
 // 按键删除文章方法
 const onDeleteArticle = (row) => {
