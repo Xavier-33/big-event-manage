@@ -72,7 +72,7 @@
       <el-main>
         <router-view></router-view>
       </el-main>
-      <el-footer>大事件 ©2025 Created by Xavier</el-footer>
+      <el-footer>Xavier的大事件项目 ©2025 Created by Xavier</el-footer>
     </el-container>
   </el-container>
 </template>
