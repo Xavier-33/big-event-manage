@@ -53,7 +53,7 @@
       style="margin-top: 20px; justify-content: flex-end;"
     />
     <!-- 抽屉组件 -->
-    <article-edit ref="articleEditRef"></article-edit>
+    <article-edit ref="articleEditRef" @success="onSuccess"></article-edit>
   </PageContainer>
 </template>
 
@@ -120,6 +120,14 @@ const onEditArticle = (row) => {
 // 按键删除文章方法
 const onDeleteArticle = (row) => {
   console.log('删除文章', row)
+}
+// 添加编辑
+const onSuccess = (type) => {
+  if (type === 'add') {
+    const lastPage = Math.ceil((total.value + 1) / params.value.pagesize)
+    params.value.pagenum = lastPage
+  }
+  getArticleList()
 }
 
 // 处理分页展示数据条数变化

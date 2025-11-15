@@ -29,11 +29,18 @@
         </el-upload>
       </el-form-item>
       <el-form-item label="文章内容" prop="content">
-        <div class="editor">富文本编辑器</div>
+        <div class="editor">
+          <quill-editor
+            ref="editorRef"
+            theme="snow"
+            v-model:content="formModel.content"
+            contentType="html"
+          ></quill-editor>
+        </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">发布</el-button>
-        <el-button type="info">草稿</el-button>
+        <el-button @click="onPublish('已发布')" type="primary">发布</el-button>
+        <el-button @click="onPublish('草稿')" type="info">草稿</el-button>
       </el-form-item>
     </el-form>
   </el-drawer>
@@ -43,6 +50,9 @@
 import { ref } from 'vue'
 import ChannelSelect from './ChannelSelect.vue'
 import { Plus } from '@element-plus/icons-vue'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import { artPublishService } from '@/api/article'
 
 const visibleDrawer = ref(false)  // 抽屉组件是否可见
 
@@ -58,13 +68,18 @@ const defaultForm = {
 // 表单数据模型
 const formModel = ref({ ...defaultForm })  
 
+const formRef = ref()
+const editorRef = ref()
 const open = (row) => {
   visibleDrawer.value = true
   // 如果是编辑操作，将传入的文章数据合并到表单数据模型中
-  if (Object.keys(row).length !== 0) {
-    formModel.value = { ...defaultForm, ...row }
+  if (row.id) {
+    console.log('编辑回显')
   } else {
     formModel.value = { ...defaultForm }
+    // 显示重置
+    imgUrl.value = ''
+    editorRef.value.setHTML('')
   }
   console.log(row)
 }
@@ -80,6 +95,27 @@ const onUploadFile = (uploadFile) => {
 defineExpose({
   open
 })
+
+const emit = defineEmits(['success']);
+const onPublish = async (state) => {
+  formModel.value.state = state;
+  
+  const fd = new FormData()
+  for (let key in formModel.value) {
+    fd.append(key, formModel.value[key])
+  }
+
+  // 发请求
+  if (formModel.value.id) {
+    console.log("编辑操作")
+  } else {
+    await artPublishService(fd)
+    ElMessage.success('添加成功')
+    visibleDrawer.value = false
+    emit('success', 'add')
+  }
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -108,6 +144,12 @@ defineExpose({
       height: 178px;
       text-align: center;
     }
+  }
+}
+.editor {
+  width: 100%;
+  :deep(.ql-editor) {
+    min-height: 200px;
   }
 }
 </style>

@@ -17,3 +17,6 @@ export const articleEditChannelService = (data) => {
 export const articleGetListService = (params) => {
   return request.get('/my/article/list', { params })
 }
+
+// 添加文章
+export const artPublishService = (data) => request.post('/my/article/add', data)
