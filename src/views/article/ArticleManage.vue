@@ -62,7 +62,7 @@ import { ref } from 'vue'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import ChannelSelect from './components/ChannelSelect.vue'
 import ArticleEdit from './components/ArticleEdit.vue'
-import { articleGetListService } from '@/api/article'
+import { articleGetListService, artDelService } from '@/api/article'
 import { formatTime } from '@/utils/format'
 
 
@@ -118,9 +118,17 @@ const onEditArticle = (row) => {
   articleEditRef.value.open(row)
 }
 // 按键删除文章方法
-const onDeleteArticle = (row) => {
-  console.log('删除文章', row)
+const onDeleteArticle = async (row) => {
+  await ElMessageBox.confirm('你确认删除该文章信息吗？', '温馨提示', {
+    type: 'warning',
+    confirmButtonText: '确认',
+    cancelButtonText: '取消'
+  })
+  await artDelService(row.id)
+  ElMessage({ type: 'success', message: '删除成功' })
+  getArticleList()
 }
+
 // 添加编辑
 const onSuccess = (type) => {
   if (type === 'add') {
